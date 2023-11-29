@@ -51,9 +51,20 @@ class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+# views.py
+from rest_framework import generics
+from .models import Product
+from .serializers import ProductSerializer
+
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        category_id = self.request.query_params.get('category', None)
+        if category_id:
+            return Product.objects.filter(category_id=category_id)
+        return Product.objects.all()
+
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
